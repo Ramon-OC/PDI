@@ -1,20 +1,33 @@
 imagen = imread('Prometeo.jpg');
-coordinates = cell(5, 1); 
 
-% Se generan cinco coordenadas de forma aleatoria
-for i = 1:5
-    x = randi([1, 64]); 
-    y = randi([1, 64]); 
-    coordinates{i} = [x, y];
-end
+% El tamaño de la imagen debe ser 64 x 64
+is64x64 = size(imagen, 1) == 64 && size(imagen, 2) == 64;
 
-% Prueba para el peor de los casos
-% coordinates = {[1,1];[64,64];[64,1];[1,64]};
+% La extension debe ser .jpg
+[~, ~, extension] = fileparts('Prometeo.jpg');
+isJpg = strcmpi(extension, '.jpg');
 
-imshow(imagen);
-
-for i = 1:size(coordinates, 1)
-    calculateAdjacencies(coordinates{i})
+if is64x64 && isJpg
+    coordinates = cell(5, 1); 
+    
+    % Se generan cinco coordenadas de forma aleatoria
+    for i = 1:5
+        x = randi([1, 64]); 
+        y = randi([1, 64]); 
+        coordinates{i} = [x, y];
+    end
+    
+    % Prueba para el peor de los casos
+    % coordinates = {[1,1];[64,64];[64,1];[1,64]};
+    
+    % Prueba para las coordenadas del reporte
+    % coordinates = {[18,49]; [13,19]; [6,37]; [44,35]; [28,42]};
+    
+    imshow(imagen);
+    
+    for i = 1:size(coordinates, 1)
+        calculateAdjacencies(coordinates{i})
+    end
 end
 
 % Nos devuelve las cuatro adyacencias de una coordenada
@@ -75,6 +88,15 @@ function drawAdjacencies(adjacencies, color)
     hold off;
 end
 
+% Dada una coordenada dibuja un circulo 
+function drawCircle(coordinate, color)
+    hold on;
+    x = coordinate(1);
+    y = coordinate(2);
+    rectangle('Position', [x-0.5, y-0.5, 1, 1], 'Curvature', [1, 1], 'EdgeColor', color, 'LineWidth', 2); 
+    hold off;
+end
+
 % Muestra las adyacencias y las dibuja
 function calculateAdjacencies(coordinate)
     adjacencies4 = cell(4, 1);
@@ -103,6 +125,7 @@ function calculateAdjacencies(coordinate)
     fprintf(' - Vecino inferior izquierdo  [x-1, y+1]: [%d,%d]\n\n', adjacencies8{4});
 
     % Dibuja las adyacencias
+    drawCircle(coordinate,'g')
     drawAdjacencies(adjacencies4, 'b')
     drawAdjacencies(adjacencies8, 'r')
 end
